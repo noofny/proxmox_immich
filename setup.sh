@@ -47,7 +47,7 @@ CONTAINER_ARCH=$(dpkg --print-architecture)
 mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\($CONTAINER_OS_STRING.*\)/\1/p" | sort -t - -k 2 -V)
 # mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\(ubuntu-20.04.*\)/\1/p" | sort -t - -k 2 -V)
 TEMPLATE="${TEMPLATES[-1]}"
-TEMPLATE_STRING="cfs-ssd:vztmpl/${TEMPLATE}"
+TEMPLATE_STRING="cfs-ssd:template/cache/${TEMPLATE}"
 info "Using template: ${TEMPLATE_STRING}"
 
 
