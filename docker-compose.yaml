@@ -1,4 +1,4 @@
-version: '3.3'
+version: '2.1'
 
 x-common-environment: &common_environment
   TZ: 'Australia/Sydney'
@@ -11,15 +11,12 @@ x-common-environment: &common_environment
   IMMICH_VERSION: release
   # Connection secrets for postgres and typesense. You should change these to random passwords
   TYPESENSE_API_KEY: change-this-later
-  DB_PASSWORD: change-this-later
   # The values below this line do not need to be changed
   ###################################################################################
-  DB_HOSTNAME: immich_postgres
-  DB_USERNAME: postgres
-  DB_DATABASE_NAME: immich
-  REDIS_HOSTNAME: immich_redis
-  IMMICH_SERVER_URL: https://immich.yourdomain.com
-  IMMICH_WEB_URL: https://immich.yourdomain.com
+  # DB_HOSTNAME: immich_postgres
+  # REDIS_HOSTNAME: immich_redis
+  # IMMICH_SERVER_URL: https://immich.yourdomain.com
+  # IMMICH_WEB_URL: https://immich.yourdomain.com
 
 
 services:
@@ -87,9 +84,9 @@ services:
     #   - .env
     environment:
       <<: *common_environment
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_PASSWORD: change-this-later
+      POSTGRES_USER: postgres
+      POSTGRES_DB: immich
     volumes:
       - /home/ubuntu/docker/immich/pgdata:/var/lib/postgresql/data
     restart: unless-stopped

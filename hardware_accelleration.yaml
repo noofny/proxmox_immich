@@ -1,4 +1,4 @@
-version: "3.3"
+version: "2.1"
 
 # Hardware acceleration for transcoding - Optional
 # This is only needed if you want to use hardware acceleration for transcoding.
