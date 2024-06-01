@@ -24,7 +24,7 @@ pushd $TEMP_FOLDER_PATH >/dev/null
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
 DEFAULT_PASSWORD='photosadmin'
-DEFAULT_IPV4_CIDR='192.168.0.28/24'
+DEFAULT_IPV4_CIDR='192.168.0.24/24'
 DEFAULT_IPV4_GW='192.168.0.1'
 DEFAULT_CONTAINER_ID=$(pvesh get /cluster/nextid)
 read -p "Enter a hostname (${DEFAULT_HOSTNAME}) : " HOSTNAME
