@@ -45,12 +45,18 @@ CONTAINER_OS_VERSION='20.04'  # higher are currently unsupported
 CONTAINER_OS_STRING="${CONTAINER_OS_TYPE}-${CONTAINER_OS_VERSION}"
 info "Using OS: ${CONTAINER_OS_STRING}"
 CONTAINER_ARCH=$(dpkg --print-architecture)
-mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\($CONTAINER_OS_STRING.*\)/\1/p" | sort -t - -k 2 -V)
+# mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\($CONTAINER_OS_STRING.*\)/\1/p" | sort -t - -k 2 -V)
 # mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\(ubuntu-20.04.*\)/\1/p" | sort -t - -k 2 -V)
+TEMPLATE_STRING=$(pveam list cfs-ssd | grep $CONTAINER_OS_STRING | awk '{print $1})
 echo '>>>>>>> 1.1 <<<<<<<'
-TEMPLATE="${TEMPLATES[-1]}"
-TEMPLATE_STRING="cfs-ssd:template/cache/${TEMPLATE}"
+# TEMPLATE="${TEMPLATES[-1]}"
+# TEMPLATE_STRING="cfs-ssd:template/cache/${TEMPLATE}"
 info "Using template: ${TEMPLATE_STRING}"
+
+
+
+
+
 
 
 # storage location
