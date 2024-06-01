@@ -1,0 +1,296 @@
+version: '3.8'
+
+x-common-environment: &common_environment
+  TZ: 'Australia/Sydney'
+  PUID: 1000
+  PGID: 1000
+  # You can find documentation for all the supported env variables at https://immich.app/docs/install/environment-variables
+  # The location where your uploaded files are stored
+  UPLOAD_LOCATION: /home/ubuntu/docker/immich/upload
+  # The Immich version to use. You can pin this to a specific version like "v1.71.0"
+  IMMICH_VERSION: release
+  # Connection secrets for postgres and typesense. You should change these to random passwords
+  TYPESENSE_API_KEY: change-this-later
+  DB_PASSWORD: change-this-later
+  # The values below this line do not need to be changed
+  ###################################################################################
+  DB_HOSTNAME: immich_postgres
+  DB_USERNAME: postgres
+  DB_DATABASE_NAME: immich
+  REDIS_HOSTNAME: immich_redis
+  IMMICH_SERVER_URL: https://immich.yourdomain.com
+  IMMICH_WEB_URL: https://immich.yourdomain.com
+
+
+services:
+
+  # ---------------------------------------------------------------------
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    command: [ "start.sh", "immich" ]
+    volumes:
+      - /home/ubuntu/docker/immich/upload:/usr/src/app/upload
+    environment:
+      <<: *common_environment
+    # env_file:
+    #   - .env
+    ports:
+      - 2283:3001
+    depends_on:
+      - redis
+      - database
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------
+  immich-microservices:
+    container_name: immich_microservices
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    extends:
+      file: hardware_accelleration.yaml
+      service: hwaccel
+    command: [ "start.sh", "microservices" ]
+    volumes:
+      - /home/ubuntu/docker/immich/upload:/usr/src/app/upload
+    environment:
+      <<: *common_environment
+    # env_file:
+    #   - .env
+    depends_on:
+      - redis
+      - database
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    volumes:
+      - /home/ubuntu/docker/immich/model-cache:/cache
+    environment:
+      <<: *common_environment
+    # env_file:
+    #   - .env
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------
+  redis:
+    container_name: immich_redis
+    image: redis:6.2-alpine@sha256:70a7a5b641117670beae0d80658430853896b5ef269ccf00d1827427e3263fa3
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------
+  database:
+    container_name: immich_postgres
+    image: tensorchord/pgvecto-rs:pg14-v0.1.11
+    # env_file:
+    #   - .env
+    environment:
+      <<: *common_environment
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+    volumes:
+      - /home/ubuntu/docker/immich/pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+
+
+
+
+  # # ---------------------------------------------------------------------
+  # # heimdall - app dashboard
+  # # https://heimdall.site/
+  # heimdall:
+  #   image: linuxserver/heimdall:latest
+  #   container_name: heimdall
+  #   restart: unless-stopped
+  #   environment:
+  #     <<: *common_environment
+  #   ports:
+  #     - 80:80
+  #   volumes:
+  #     - /data/config/heimdall:/config
+
+  # # ---------------------------------------------------------------------
+  # # plex - duuh
+  # # https://www.plex.tv/
+  # # TODO: also check this out: https://hub.docker.com/r/linuxserver/plex-meta-manager
+  # plex:
+  #   container_name: plex
+  #   image: linuxserver/plex:latest
+  #   restart: unless-stopped
+  #   network_mode: host
+  #   hostname: arr-matey
+  #   environment:
+  #     <<: *common_environment
+  #     # - PLEX_CLAIM='TODO'
+  #     # - ADVERTISE_IP=http://192.168.0.27:32400/
+  #   ports:
+  #     - 32400:32400
+  #   volumes:
+  #     - /data/config/plex:/config
+  #     - /data/transcode:/transcode
+  #     - /data:/data
+  
+  # # ---------------------------------------------------------------------
+  # # overseerr - media discovery
+  # # https://overseerr.dev/
+  # overseerr:
+  #   image: linuxserver/overseerr:latest
+  #   container_name: overseerr
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - plex
+  #   environment:
+  #     <<: *common_environment
+  #   ports:
+  #     - 5055:5055
+  #   volumes:
+  #     - /data/config/overseerr:/config
+
+  # # ---------------------------------------------------------------------
+  # # tautulli - plex monitoring
+  # # https://tautulli.com/
+  # tautulli:
+  #   container_name: tautulli
+  #   image: linuxserver/tautulli:latest
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - plex
+  #   environment:
+  #     <<: *common_environment
+  #   ports:
+  #     - 8181:8181
+  #   volumes:
+  #     - /data/config/tautulli:/config
+
+  # # ---------------------------------------------------------------------
+  # # jellyfin - media centre
+  # # https://github.com/jellyfin/jellyfin
+  # jellyfin:
+  #   container_name: jellyfin
+  #   image: linuxserver/jellyfin:latest
+  #   restart: unless-stopped
+  #   environment:
+  #     <<: *common_environment
+  #     # - JELLYFIN_PublishedServerUrl=192.168.0.27 #optional
+  #   ports:
+  #     - 8096:8096
+  #     # - 8920:8920  # optional
+  #     # - 7359:7359/udp  # optional
+  #     # - 1900:1900/udp  # optional
+  #   volumes:
+  #     - /data/config/jellyfin:/config
+  #     - /data/tv:/data/tvshows
+  #     - /data/movies:/data/movies
+
+  # # ---------------------------------------------------------------------
+  # # qbittorrent - torrent client
+  # # https://www.qbittorrent.org/
+  # # NOTE: default web login is admin/adminadmin
+  # qbittorrent:
+  #   container_name: qbittorrent
+  #   image: linuxserver/qbittorrent:latest
+  #   restart: unless-stopped
+  #   environment:
+  #     <<: *common_environment
+  #     WEBUI_PORT: 5080
+  #   ports:
+  #     - 5080:5080
+  #   volumes:
+  #     - /data/config/qbittorrent:/config
+  #     - /data/downloads/complete:/downloads
+
+  # # ---------------------------------------------------------------------
+  # # lidarr - collection manager / requester for music
+  # # https://github.com/lidarr/Lidarr
+  # lidarr:
+  #   image: linuxserver/lidarr:latest
+  #   container_name: lidarr
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - qbittorrent
+  #   environment:
+  #     <<: *common_environment
+  #   ports:
+  #     - 8686:8686
+  #   volumes:
+  #     - /data/config/lidarr:/config
+  #     - /data/music:/music
+  #     - /data/downloads/complete:/downloads
+
+  # # ---------------------------------------------------------------------
+  # # sonarr - collection manager / requester for tv shows
+  # # https://sonarr.tv/
+  # sonarr:
+  #   container_name: sonarr
+  #   image: linuxserver/sonarr:latest
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - qbittorrent
+  #   environment:
+  #     <<: *common_environment
+  #   ports:
+  #     - 8989:8989
+  #   volumes:
+  #     - /data/config/sonarr:/config
+  #     - /data/tv:/tv
+  #     - /data/downloads/complete:/downloads
+
+  # # ---------------------------------------------------------------------
+  # # radarr - collection manager (sonarr fork) / requester for movies
+  # # https://github.com/Radarr/Radarr
+  # radarr:
+  #   container_name: radarr
+  #   image: linuxserver/radarr:latest
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - qbittorrent
+  #   environment:
+  #     <<: *common_environment
+  #   ports:
+  #     - 7878:7878
+  #   volumes:
+  #     - /data/config/radarr:/config
+  #     - /data/movies:/movies
+  #     - /data/downloads/complete:/downloads
+
+  # # ---------------------------------------------------------------------
+  # # jackett - index manager
+  # # https://github.com/Jackett/Jackett
+  # jackett:
+  #   container_name: jackett
+  #   image: linuxserver/jackett:latest
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - sonarr
+  #     - radarr
+  #     - lidarr
+  #   environment:
+  #     <<: *common_environment
+  #   ports:
+  #     - 9117:9117
+  #   volumes:
+  #     - /data/config/jackett:/config
+  #     - /data/downloads/blackhole:/downloads
+
+  # # ---------------------------------------------------------------------
+  # # prowlarr - index manager
+  # # https://github.com/Prowlarr/Prowlarr
+  # prowlarr:
+  #   container_name: prowlarr
+  #   image: linuxserver/prowlarr:latest
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - sonarr
+  #     - radarr
+  #     - lidarr
+  #   environment:
+  #     <<: *common_environment
+  #   ports:
+  #     - 9696:9696
+  #   volumes:
+  #     - /data/config/prowlarr:/config
+  #     - /data/downloads/blackhole:/downloads
+  
