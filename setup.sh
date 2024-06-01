@@ -20,7 +20,7 @@ function cleanup() {
 TEMP_FOLDER_PATH=$(mktemp -d)
 pushd $TEMP_FOLDER_PATH >/dev/null
 
-echo '>>>> V2.3 <<<<<'
+echo '>>>> V2.4 <<<<<'
 
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
@@ -41,7 +41,7 @@ HOST_IP4_CIDR="${HOST_IP4_CIDR:-${DEFAULT_IPV4_CIDR}}"
 HOST_IP4_GATEWAY="${HOST_IP4_GATEWAY:-${DEFAULT_IPV4_GW}}"
 export HOST_IP4_CIDR=${HOST_IP4_CIDR}
 CONTAINER_OS_TYPE='ubuntu'
-CONTAINER_OS_VERSION='22.04'  # higher are currently unsupported
+CONTAINER_OS_VERSION='20.04'  # higher are currently unsupported
 CONTAINER_OS_STRING="${CONTAINER_OS_TYPE}-${CONTAINER_OS_VERSION}"
 info "Using OS: ${CONTAINER_OS_STRING}"
 CONTAINER_ARCH=$(dpkg --print-architecture)
@@ -80,7 +80,7 @@ pct create "${CONTAINER_ID}" "${TEMPLATE_STRING}" \
     -onboot 0 \
     -features nesting=1,keyctl=1 \
     -hostname "${HOSTNAME}" \
-    -net0 name=eth0,bridge=vmbr100,gw=${HOST_IP4_GATEWAY},ip=${HOST_IP4_CIDR} \
+    -net0 name=eth0,bridge=vmbr0,gw=${HOST_IP4_GATEWAY},ip=${HOST_IP4_CIDR} \
     -ostype "${CONTAINER_OS_TYPE}" \
     -password ${HOSTPASS} \
     -storage "${STORAGE}" \
