@@ -20,7 +20,7 @@ function cleanup() {
 TEMP_FOLDER_PATH=$(mktemp -d)
 pushd $TEMP_FOLDER_PATH >/dev/null
 
-echo '>>>> V1.1 <<<<<'
+echo '>>>> V1.2 <<<<<'
 
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
@@ -47,8 +47,7 @@ info "Using OS: ${CONTAINER_OS_STRING}"
 CONTAINER_ARCH=$(dpkg --print-architecture)
 # mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\($CONTAINER_OS_STRING.*\)/\1/p" | sort -t - -k 2 -V)
 # mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\(ubuntu-20.04.*\)/\1/p" | sort -t - -k 2 -V)
-TEMPLATE_STRING=$(pveam list cfs-ssd | grep $CONTAINER_OS_STRING | awk '{print $1})
-echo '>>>>>>> 1.1 <<<<<<<'
+TEMPLATE_STRING=$(pveam list cfs-ssd | grep $CONTAINER_OS_STRING | awk '{print $1}')
 # TEMPLATE="${TEMPLATES[-1]}"
 # TEMPLATE_STRING="cfs-ssd:template/cache/${TEMPLATE}"
 info "Using template: ${TEMPLATE_STRING}"
