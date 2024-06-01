@@ -20,7 +20,7 @@ function cleanup() {
 TEMP_FOLDER_PATH=$(mktemp -d)
 pushd $TEMP_FOLDER_PATH >/dev/null
 
-echo '>>>> V1.7 <<<<<'
+echo '>>>> V1.9 <<<<<'
 
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
@@ -107,7 +107,7 @@ fi
 
 # Setup OS
 info "Fetching setup script..."
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_os.sh
+wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_os.sh
 info "Executing script..."
 cat ./setup_os.sh
 pct push "${CONTAINER_ID}" ./setup_os.sh /setup_os.sh -perms 755
@@ -117,7 +117,7 @@ pct reboot "${CONTAINER_ID}"
 
 # Setup Docker
 info "Fetching setup script..."
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_docker.sh
+wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_docker.sh
 info "Executing script..."
 cat ./setup_docker.sh
 pct push "${CONTAINER_ID}" ./setup_docker.sh /setup_docker.sh -perms 755
@@ -127,9 +127,9 @@ pct reboot "${CONTAINER_ID}"
 
 # Setup Immich
 info "Fetching setup script..."
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_immich.sh
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/docker-compose.yaml
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/hardware_accelleration.yaml
+wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_immich.sh
+wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/docker-compose.yaml
+wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/hardware_accelleration.yaml
 info "Executing script..."
 cat ./setup_immich.sh
 pct push "${CONTAINER_ID}" ./setup_immich.sh /setup_immich.sh -perms 755
