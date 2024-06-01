@@ -45,8 +45,9 @@ CONTAINER_OS_STRING="${CONTAINER_OS_TYPE}-${CONTAINER_OS_VERSION}"
 info "Using OS: ${CONTAINER_OS_STRING}"
 CONTAINER_ARCH=$(dpkg --print-architecture)
 mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\($CONTAINER_OS_STRING.*\)/\1/p" | sort -t - -k 2 -V)
+# mapfile -t TEMPLATES < <(pveam available -section system | sed -n "s/.*\(ubuntu-20.04.*\)/\1/p" | sort -t - -k 2 -V)
 TEMPLATE="${TEMPLATES[-1]}"
-TEMPLATE_STRING="remote:vztmpl/${TEMPLATE}"
+TEMPLATE_STRING="cfs-ssd:vztmpl/${TEMPLATE}"
 info "Using template: ${TEMPLATE_STRING}"
 
 
