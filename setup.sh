@@ -20,7 +20,7 @@ function cleanup() {
 TEMP_FOLDER_PATH=$(mktemp -d)
 pushd $TEMP_FOLDER_PATH >/dev/null
 
-echo '>>>> V1.3 <<<<<'
+echo '>>>> V1.4 <<<<<'
 
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
@@ -103,48 +103,49 @@ pct resize "${CONTAINER_ID}" rootfs 20G
 
 
 # Start container
-info "Starting LXC container..."
+info "Starting LXC container CONTAINER_ID=${CONTAINER_ID}..."
 pct start "${CONTAINER_ID}" || exit 1
 sleep 5
 CONTAINER_STATUS=$(pct status $CONTAINER_ID)
+info "Checking comtainer status CONTAINER_ID=${CONTAINER_ID} CONTAINER_STATUS=${CONTAINER_STATUS}"
 if [ ${CONTAINER_STATUS} != "status: running" ]; then
     error "Container ${CONTAINER_ID} is not running! status=${CONTAINER_STATUS}"
     exit 1
 fi
 
 
-# Setup OS
-info "Fetching setup script..."
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_os.sh
-info "Executing script..."
-cat ./setup_os.sh
-pct push "${CONTAINER_ID}" ./setup_os.sh /setup_os.sh -perms 755
-pct exec "${CONTAINER_ID}" -- bash -c "/setup_os.sh"
-pct reboot "${CONTAINER_ID}"
+# # Setup OS
+# info "Fetching setup script..."
+# # wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_os.sh
+# info "Executing script..."
+# cat ./setup_os.sh
+# pct push "${CONTAINER_ID}" ./setup_os.sh /setup_os.sh -perms 755
+# pct exec "${CONTAINER_ID}" -- bash -c "/setup_os.sh"
+# pct reboot "${CONTAINER_ID}"
 
 
-# Setup Docker
-info "Fetching setup script..."
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_docker.sh
-info "Executing script..."
-cat ./setup_docker.sh
-pct push "${CONTAINER_ID}" ./setup_docker.sh /setup_docker.sh -perms 755
-pct exec "${CONTAINER_ID}" -- bash -c "/setup_docker.sh"
-pct reboot "${CONTAINER_ID}"
+# # Setup Docker
+# info "Fetching setup script..."
+# # wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_docker.sh
+# info "Executing script..."
+# cat ./setup_docker.sh
+# pct push "${CONTAINER_ID}" ./setup_docker.sh /setup_docker.sh -perms 755
+# pct exec "${CONTAINER_ID}" -- bash -c "/setup_docker.sh"
+# pct reboot "${CONTAINER_ID}"
 
 
-# Setup Immich
-info "Fetching setup script..."
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_immich.sh
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/docker-compose.yaml
-# wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/hardware_accelleration.yaml
-info "Executing script..."
-cat ./setup_immich.sh
-pct push "${CONTAINER_ID}" ./setup_immich.sh /setup_immich.sh -perms 755
-pct push "${CONTAINER_ID}" ./docker-compose.yaml /docker-compose.yaml
-pct push "${CONTAINER_ID}" ./hardware_accelleration.yaml /hardware_accelleration.yaml
-pct exec "${CONTAINER_ID}" -- bash -c "/setup_immich.sh"
-pct reboot "${CONTAINER_ID}"
+# # Setup Immich
+# info "Fetching setup script..."
+# # wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/setup_immich.sh
+# # wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/docker-compose.yaml
+# # wget -qL https://raw.githubusercontent.com/noofny/proxmox_immich/master/hardware_accelleration.yaml
+# info "Executing script..."
+# cat ./setup_immich.sh
+# pct push "${CONTAINER_ID}" ./setup_immich.sh /setup_immich.sh -perms 755
+# pct push "${CONTAINER_ID}" ./docker-compose.yaml /docker-compose.yaml
+# pct push "${CONTAINER_ID}" ./hardware_accelleration.yaml /hardware_accelleration.yaml
+# pct exec "${CONTAINER_ID}" -- bash -c "/setup_immich.sh"
+# pct reboot "${CONTAINER_ID}"
 
 
 # Done - reboot!
