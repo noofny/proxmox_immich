@@ -20,7 +20,7 @@ function cleanup() {
 TEMP_FOLDER_PATH=$(mktemp -d)
 pushd $TEMP_FOLDER_PATH >/dev/null
 
-echo '>>>> V2.1 <<<<<'
+echo '>>>> V2.2 <<<<<'
 
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
@@ -41,7 +41,7 @@ HOST_IP4_CIDR="${HOST_IP4_CIDR:-${DEFAULT_IPV4_CIDR}}"
 HOST_IP4_GATEWAY="${HOST_IP4_GATEWAY:-${DEFAULT_IPV4_GW}}"
 export HOST_IP4_CIDR=${HOST_IP4_CIDR}
 CONTAINER_OS_TYPE='ubuntu'
-CONTAINER_OS_VERSION='20.04'  # higher are currently unsupported
+CONTAINER_OS_VERSION='22.04'  # higher are currently unsupported
 CONTAINER_OS_STRING="${CONTAINER_OS_TYPE}-${CONTAINER_OS_VERSION}"
 info "Using OS: ${CONTAINER_OS_STRING}"
 CONTAINER_ARCH=$(dpkg --print-architecture)
@@ -85,7 +85,6 @@ pct create "${CONTAINER_ID}" "${TEMPLATE_STRING}" \
     -password ${HOSTPASS} \
     -storage "${STORAGE}" \
     --unprivileged 1 \
-    --nameserver '1.1.1.1' \
     || exit 1
 
 
@@ -104,13 +103,6 @@ if [ "${CONTAINER_STATUS}" != "status: running" ]; then
     error "Container ${CONTAINER_ID} is not running! status=${CONTAINER_STATUS}"
     exit 1
 fi
-
-
-
-ping archive.ubuntu.com
-nslookup archive.ubuntu.com 192.168.0.14
-nslookup archive.ubuntu.com 192.168.0.15
-nslookup archive.ubuntu.com 1.1.1.1
 
 
 # Setup OS
