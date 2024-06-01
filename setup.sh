@@ -20,7 +20,7 @@ function cleanup() {
 TEMP_FOLDER_PATH=$(mktemp -d)
 pushd $TEMP_FOLDER_PATH >/dev/null
 
-echo '>>>> V1.4 <<<<<'
+echo '>>>> V1.5 <<<<<'
 
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
@@ -108,7 +108,7 @@ pct start "${CONTAINER_ID}" || exit 1
 sleep 5
 CONTAINER_STATUS=$(pct status $CONTAINER_ID)
 info "Checking comtainer status CONTAINER_ID=${CONTAINER_ID} CONTAINER_STATUS=${CONTAINER_STATUS}"
-if [ ${CONTAINER_STATUS} != "status: running" ]; then
+if [ "${CONTAINER_STATUS}" != "status: running" ]; then
     error "Container ${CONTAINER_ID} is not running! status=${CONTAINER_STATUS}"
     exit 1
 fi
