@@ -20,7 +20,7 @@ function cleanup() {
 TEMP_FOLDER_PATH=$(mktemp -d)
 pushd $TEMP_FOLDER_PATH >/dev/null
 
-echo '>>>> V1.9 <<<<<'
+echo '>>>> V2.1 <<<<<'
 
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
@@ -85,6 +85,7 @@ pct create "${CONTAINER_ID}" "${TEMPLATE_STRING}" \
     -password ${HOSTPASS} \
     -storage "${STORAGE}" \
     --unprivileged 1 \
+    --nameserver '1.1.1.1' \
     || exit 1
 
 
@@ -103,6 +104,13 @@ if [ "${CONTAINER_STATUS}" != "status: running" ]; then
     error "Container ${CONTAINER_ID} is not running! status=${CONTAINER_STATUS}"
     exit 1
 fi
+
+
+
+ping archive.ubuntu.com
+nslookup archive.ubuntu.com 192.168.0.14
+nslookup archive.ubuntu.com 192.168.0.15
+nslookup archive.ubuntu.com 1.1.1.1
 
 
 # Setup OS
