@@ -22,9 +22,9 @@ echo "Setting timezone..."
 timedatectl set-timezone Australia/Sydney
 
 
-# patch
-echo "Patching..."
-apt update && apt upgrade -y
+# # patch
+# echo "Patching..."
+# apt update && apt upgrade -y
 
 
 # packages
