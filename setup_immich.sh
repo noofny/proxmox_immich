@@ -20,6 +20,7 @@ mkdir /mnt/photos
 mkdir /mnt/images
 mkdir -p /home/photosadmin/uploads
 mv /docker-compose.yaml /home/photosadmin/docker-compose.yaml
+mv /hardware_accelleration.yaml /home/photosadmin/hardware_accelleration.yaml
 # chmod 777 -R /data
 
 
