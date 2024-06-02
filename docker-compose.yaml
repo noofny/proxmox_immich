@@ -6,7 +6,7 @@ x-common-environment: &common_environment
   PGID: 1000
   # You can find documentation for all the supported env variables at https://immich.app/docs/install/environment-variables
   # The location where your uploaded files are stored
-  UPLOAD_LOCATION: /home/ubuntu/docker/immich/upload
+  UPLOAD_LOCATION: /home/photosadmin/immich/upload
   # The Immich version to use. You can pin this to a specific version like "v1.71.0"
   IMMICH_VERSION: release
   # Connection secrets for postgres and typesense. You should change these to random passwords
@@ -27,11 +27,9 @@ services:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: [ "start.sh", "immich" ]
     volumes:
-      - /home/ubuntu/docker/immich/upload:/usr/src/app/upload
+      - /home/photosadmin/immich/upload:/usr/src/app/upload
     environment:
       <<: *common_environment
-    # env_file:
-    #   - .env
     ports:
       - 2283:3001
     depends_on:
@@ -48,11 +46,9 @@ services:
       service: hwaccel
     command: [ "start.sh", "microservices" ]
     volumes:
-      - /home/ubuntu/docker/immich/upload:/usr/src/app/upload
+      - /home/photosadmin/immich/upload:/usr/src/app/upload
     environment:
       <<: *common_environment
-    # env_file:
-    #   - .env
     depends_on:
       - redis
       - database
@@ -63,11 +59,9 @@ services:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
     volumes:
-      - /home/ubuntu/docker/immich/model-cache:/cache
+      - /home/photosadmin/immich/model-cache:/cache
     environment:
       <<: *common_environment
-    # env_file:
-    #   - .env
     restart: unless-stopped
 
   # ---------------------------------------------------------------------
@@ -80,15 +74,13 @@ services:
   database:
     container_name: immich_postgres
     image: tensorchord/pgvecto-rs:pg14-v0.1.11
-    # env_file:
-    #   - .env
     environment:
       <<: *common_environment
       POSTGRES_PASSWORD: change-this-later
       POSTGRES_USER: postgres
       POSTGRES_DB: immich
     volumes:
-      - /home/ubuntu/docker/immich/pgdata:/var/lib/postgresql/data
+      - /home/photosadmin/immich/pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
 
