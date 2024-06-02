@@ -31,4 +31,4 @@ echo "Starting stack..."
 docker-compose up --detach
 
 
-echo "Setup Immich complete - you can access the dashboard at http://$(hostname -I)"
+echo "Setup Immich complete - you can access the dashboard at http://$(hostname -I):2283"
