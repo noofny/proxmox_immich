@@ -41,9 +41,9 @@ services:
   immich-microservices:
     container_name: immich_microservices
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
-    extends:
-      file: hardware_accelleration.yaml
-      service: hwaccel
+    # extends:
+    #   file: hardware_accelleration.yaml
+    #   service: hwaccel
     command: [ "start.sh", "microservices" ]
     volumes:
       - /home/photosadmin/upload:/usr/src/app/upload
