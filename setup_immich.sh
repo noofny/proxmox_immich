@@ -24,7 +24,7 @@ mv /docker-compose.yaml /home/photosadmin/docker-compose.yaml
 
 
 echo "Creating stack..."
-cd /data/config
+cd /home/photosadmin
 docker-compose up --no-start
 echo "Starting stack..."
 docker-compose up --detach

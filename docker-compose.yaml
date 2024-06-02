@@ -6,7 +6,7 @@ x-common-environment: &common_environment
   PGID: 1000
   # You can find documentation for all the supported env variables at https://immich.app/docs/install/environment-variables
   # The location where your uploaded files are stored
-  UPLOAD_LOCATION: /home/photosadmin/immich/upload
+  UPLOAD_LOCATION: /home/photosadmin/upload
   # The Immich version to use. You can pin this to a specific version like "v1.71.0"
   IMMICH_VERSION: release
   # Connection secrets for postgres and typesense. You should change these to random passwords
@@ -27,7 +27,7 @@ services:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: [ "start.sh", "immich" ]
     volumes:
-      - /home/photosadmin/immich/upload:/usr/src/app/upload
+      - /home/photosadmin/upload:/usr/src/app/upload
     environment:
       <<: *common_environment
     ports:
@@ -46,7 +46,7 @@ services:
       service: hwaccel
     command: [ "start.sh", "microservices" ]
     volumes:
-      - /home/photosadmin/immich/upload:/usr/src/app/upload
+      - /home/photosadmin/upload:/usr/src/app/upload
     environment:
       <<: *common_environment
     depends_on:
@@ -59,7 +59,7 @@ services:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
     volumes:
-      - /home/photosadmin/immich/model-cache:/cache
+      - /home/photosadmin/model-cache:/cache
     environment:
       <<: *common_environment
     restart: unless-stopped
@@ -80,7 +80,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: immich
     volumes:
-      - /home/photosadmin/immich/pgdata:/var/lib/postgresql/data
+      - /home/photosadmin/pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
 
