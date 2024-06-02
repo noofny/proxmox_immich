@@ -23,8 +23,8 @@ timedatectl set-timezone Australia/Sydney
 
 
 # # patch
-# echo "Patching..."
-# apt update && apt upgrade -y
+echo "Patching..."
+apt update && apt upgrade -y
 
 
 # packages
@@ -43,6 +43,7 @@ ufw allow http
 ufw allow https
 ufw allow 22/tcp
 ufw allow 80/tcp
+ufw allow 2283/tcp
 ufw status
 
 

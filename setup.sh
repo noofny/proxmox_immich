@@ -20,7 +20,7 @@ function cleanup() {
 TEMP_FOLDER_PATH=$(mktemp -d)
 pushd $TEMP_FOLDER_PATH >/dev/null
 
-echo '>>>> V3.2 <<<<<'
+echo '>>>> V3.4 <<<<<'
 
 # prompts/args
 DEFAULT_HOSTNAME='photos-1'
