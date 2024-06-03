@@ -32,3 +32,4 @@ mp2: /mnt/images,mp=/mnt/images,backup=0
 
 - [Shared variables in docker-compose.yml](https://rosengren.me/blog/shared-variables-in-docker-compose/)
 - [Jim's Garage - # Don't Let Apple & Google Harvest Your Photos, Use Immich to Self-Host Your Own Cloud!](https://www.youtube.com/watch?v=URJiQb8PwWo)
+- [Create albums automatically based on folder name](https://www.reddit.com/r/immich/comments/181diej/create_albums_automatically_based_on_folder_name/)
