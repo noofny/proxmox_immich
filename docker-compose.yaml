@@ -1,6 +1,3 @@
-version: '2.1'
-
-
 # https://immich.app/docs/install/environment-variables
 
 
@@ -8,7 +5,7 @@ x-common-environment: &common_environment
   TZ: 'Australia/Sydney'
   PUID: 1000
   PGID: 1000
-  UPLOAD_LOCATION: /home/photosadmin/upload
+  UPLOAD_LOCATION: /mnt/nobackup/immich_upload
   IMMICH_VERSION: release
   TYPESENSE_API_KEY: CHANGE_ME
   DB_HOSTNAME: immich_database
@@ -27,7 +24,8 @@ services:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: [ "start.sh", "immich" ]
     volumes:
-      - /home/photosadmin/upload:/usr/src/app/upload
+      - /mnt/nobackup/immich_upload:/usr/src/app/upload
+      - /mnt/images:/mnt/images
     environment:
       <<: *common_environment
     ports:
@@ -40,12 +38,13 @@ services:
   immich-microservices:
     container_name: immich_microservices
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
-    # extends:
-    #   file: hardware_accelleration.yaml
-    #   service: hwaccel
+    extends:
+      file: hardware_accelleration.yaml
+      service: hwaccel
     command: [ "start.sh", "microservices" ]
     volumes:
-      - /home/photosadmin/upload:/usr/src/app/upload
+      - /mnt/nobackup/immich_upload:/usr/src/app/upload
+      - /mnt/images:/mnt/images
     environment:
       <<: *common_environment
     depends_on:
@@ -64,17 +63,12 @@ services:
   # ---------------------------------------------------------------------
   immich_cache:
     container_name: immich_cache
-    # image: redis:6.2-alpine@sha256:70a7a5b641117670beae0d80658430853896b5ef269ccf00d1827427e3263fa3
     image: registry.hub.docker.com/library/redis:6.2-alpine@sha256:84882e87b54734154586e5f8abd4dce69fe7311315e2fc6d67c29614c8de2672
-    # image: redis:latest
     restart: unless-stopped
   # ---------------------------------------------------------------------
   immich_database:
     container_name: immich_database
-    # image: tensorchord/pgvecto-rs:pg14-v0.1.11
-    # image: tensorchord/pgvecto-rs:pg14-v0.3.0-alpha.2
     image: registry.hub.docker.com/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
-    # image: tensorchord/pgvecto-rs:pg16-v0.3.0-alpha.2
     environment:
       <<: *common_environment
     volumes:
