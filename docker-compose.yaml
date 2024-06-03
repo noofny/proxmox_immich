@@ -1,6 +1,5 @@
 # https://immich.app/docs/install/environment-variables
 
-
 x-common-environment: &common_environment
   TZ: 'Australia/Sydney'
   PUID: 1000
@@ -25,6 +24,7 @@ services:
     command: [ "start.sh", "immich" ]
     volumes:
       - /mnt/nobackup/immich_upload:/usr/src/app/upload
+      - /mnt/nobackup:/mnt/nobackup
       - /mnt/images:/mnt/images
     environment:
       <<: *common_environment
@@ -45,6 +45,7 @@ services:
     volumes:
       - /mnt/nobackup/immich_upload:/usr/src/app/upload
       - /mnt/images:/mnt/images
+      - /mnt/nobackup:/mnt/nobackup
     environment:
       <<: *common_environment
     depends_on:
