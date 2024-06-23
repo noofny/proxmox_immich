@@ -15,49 +15,57 @@ x-common-environment: &common_environment
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: CHANGE_ME
   REDIS_HOSTNAME: immich_cache
+  IMMICH_METRICS: true
 
 services:
   # ---------------------------------------------------------------------
-  immich-server:
+  immich_server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    depends_on:
+      - immich_cache
+      - immich_database
     command: [ "start.sh", "immich" ]
+    ports:
+      - 2283:3001
+      - 8081:8081
     volumes:
       - /mnt/nobackup/immich_upload:/usr/src/app/upload
       - /mnt/nobackup:/mnt/nobackup
       - /mnt/images:/mnt/images
+      - /mnt/photos:/mnt/photos
     environment:
       <<: *common_environment
-    ports:
-      - 2283:3001
+    restart: unless-stopped
+  # ---------------------------------------------------------------------
+  immich_microservices:
+    container_name: immich_microservices
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     depends_on:
       - immich_cache
       - immich_database
+    command: [ "start.sh", "microservices" ]
+    ports:
+      - 8082:8081
+    volumes:
+      - /mnt/nobackup/immich_upload:/usr/src/app/upload
+      - /mnt/nobackup:/mnt/nobackup
+      - /mnt/images:/mnt/images
+      - /mnt/photos:/mnt/photos
+    environment:
+      <<: *common_environment
     restart: unless-stopped
-  # ---------------------------------------------------------------------
-  immich-microservices:
-    container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     extends:
       file: hardware_accelleration.yaml
       service: hwaccel
-    command: [ "start.sh", "microservices" ]
-    volumes:
-      - /mnt/nobackup/immich_upload:/usr/src/app/upload
-      - /mnt/images:/mnt/images
-      - /mnt/nobackup:/mnt/nobackup
-    environment:
-      <<: *common_environment
-    depends_on:
-      - immich_cache
-      - immich_database
-    restart: unless-stopped
   # ---------------------------------------------------------------------
-  immich-machine-learning:
+  immich_machine_learning:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
     volumes:
       - /home/photosadmin/model-cache:/cache
+    ports:
+      - 3003:3003
     environment:
       <<: *common_environment
     restart: unless-stopped
@@ -70,8 +78,8 @@ services:
   immich_database:
     container_name: immich_database
     image: registry.hub.docker.com/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
-    environment:
-      <<: *common_environment
     volumes:
       - /home/photosadmin/pgdata:/var/lib/postgresql/data
+    environment:
+      <<: *common_environment
     restart: unless-stopped
